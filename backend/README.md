@@ -68,13 +68,13 @@ One note before you delve into your tasks: for each endpoint you are expected to
 
 REVIEW_COMMENT
 ```
-This README is missing documentation of your endpoints. Below is an example for your endpoint to get all categories. Please use it as a reference for creating your documentation and resubmit your code. 
+This README is missing documentation of your endpoints. Below is an example for your endpoint to get all categories. Please use it as a reference for creating your documentation and resubmit your code.  
 
 Endpoints
 GET '/categories'
-GET ...
-POST ...
-DELETE ...
+GET ...'/categories/<int:cat_id>/questions'
+POST ...'/questions' 
+DELETE ... 'questions/<int:q_id>'
 
 GET '/categories'
 - Fetches a dictionary of categories in which the keys are the ids and the value is the corresponding string of the category
@@ -88,6 +88,45 @@ GET '/categories'
 '6' : "Sports"}
 
 ```
+GET 'categories/id/questions'
+- Fetchs a dictionary of questions
+- Request Argument: selecte category 
+- Reruens: An object with list of dictionary(questions) filtered by category
+"questions": [
+    {
+      "answer": "",
+      "category": ,
+      "difficulty": ,
+      "id":,
+      "question": ""
+    }]
+
+'''
+POST'
+- Option A: Creaet a new instance of the questions table
+- Optiona B: Search for questions in the database
+- Request Argumnet: None, data collection Json file
+- Return : option A confirmation or an error 
+           Option B list of result, each object is in a dictionary format 
+
+...
+DELETE 
+- Select the question and the Question.id will be sned to the API to delete the row from the table 
+- Request argument: Question.id 
+- Return: one object with the information below:
+    {
+    success":True,
+        "deleted":"",
+        "question":"",
+        "total_question":""
+    }
+
+
+
+
+
+
+
 
 
 ## Testing
