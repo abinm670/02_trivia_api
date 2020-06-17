@@ -39,7 +39,10 @@ def create_app(test_config=None):
   @app.route('/categories')
   def retrive_categories():
     selection = Category.query.order_by(Category.id).all()
+  
+    
     selection=[i.type.format() for i in selection]
+
     
 
     return jsonify({
@@ -112,11 +115,12 @@ def create_app(test_config=None):
     try:
       if search:
         selection=Question.query.order_by(Question.id).filter(Question.question.ilike('%{}%'.format(search)))
-        
-        if selection is None:
+        x=selection.all()
+        if  selection is None :
           abort(404)
         
         current_question=paginate_questions(request, selection)
+        
 
         return jsonify({
           'success':True, 
@@ -143,7 +147,7 @@ def create_app(test_config=None):
   
   @app.route('/categories/<int:cat_id>/questions', methods=['GET'])
   def get_questions_by_categories(cat_id):
-    selection=Question.query.filter(Question.category == cat_id)
+    selection=Question.query.filter(Question.category == (cat_id+1))
     questions=paginate_questions(request, selection)
 
     return jsonify({
@@ -157,26 +161,25 @@ def create_app(test_config=None):
   @app.route('/quizzes' , methods=['POST'])
   def quiz():
     body=request.get_json()
-    
+    print("info send :", body)
     previous_questions=body['previous_questions']
     quiz_category=body['quiz_category']['id']
+    # print("test",previous_questions, "id:", quiz_category)
     try:
-      quiz=Question.query.filter(Question.category == quiz_category).all()
+      quiz=Question.query.filter(Question.category == int(quiz_category)+1).all()
 
       if quiz is None:
         abort(404)
 
-      quiz=[q.format() for q in quiz]
-      quiz=random.choice(quiz)
-      if quiz != previous_questions:
-        previous_questions +=quiz
+      quiz_list=[q.format() for q in quiz]
+      quiz=random.choice(quiz_list)
 
-      
-      pprint.pprint(quiz)
       return jsonify({
         "success":True,
-        "question":quiz
+        "question":quiz, 
+        "previous_questions":[]
       })
+      
 
     except:
       abort(422) 
@@ -195,8 +198,7 @@ def create_app(test_config=None):
     return jsonify({
       "success":False,
       "error":422,
-      "message":"unprocessable", 
-      "more":"jojo"
+      "message":"unprocessable",
     }),422
 
 
