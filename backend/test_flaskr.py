@@ -69,6 +69,8 @@ class TriviaTestCase(unittest.TestCase):
         self.assertTrue(data['total_question'])
         self.assertTrue(len(data['question']))
         self.assertEqual(question, None)
+    
+    
 
     def test_create_new_question(self):
         res = self.client().post('/questions', json=self.new_question)
@@ -81,6 +83,42 @@ class TriviaTestCase(unittest.TestCase):
         self.assertEqual(res.status_code,422)
         self.assertEqual(data['success'], False )
         self.assertEqual(data['message'], 'unprocessable')
+
+    def test_get_questions_by_category(self):
+        res=self.client().get('categories/1/questions')
+        data=json.loads(res.data)
+
+        self.assertEqual(res.status_code,200)
+        self.assertEqual(data['total_questions'],3)
+    
+    def test_404_question_not_found(self):
+        res=self.client().get('/categories/lkklok/questions')
+        data=json.loads(res.data)
+
+        self.assertEqual(res.status_code, 404)
+        self.assertEqual(data['message'], "resource not found please check your input")
+
+    
+    def test_search_tool(self):
+        res=self.client().post('/questions', json={'searchTerm':'Which'})
+        data=json.loads(res.data)
+
+        self.assertEqual(res.status_code,200)
+        self.assertEqual(data['success'], True)
+        self.assertEqual(data['totalQuestions'],6)
+    
+    def test_search_for_not_found_info(self):
+        res=self.client().post('/questions' , json={'searchTerm':'udacity'})
+        data=json.loads(res.data)
+
+        self.assertEqual(data['totalQuestions'],0)
+
+
+
+
+
+
+    
 
 
 
