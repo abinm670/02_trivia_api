@@ -38,42 +38,60 @@ def create_app(test_config=None):
   
   @app.route('/categories')
   def retrive_categories():
-    selection = Category.query.order_by(Category.id).all()
+    selection = Category.query.all()
+    
   
     
-    selection=[i.type.format() for i in selection]
+    # selection=[i.format() for i in selection]
+    index_se={}
+    for i in selection:
+      index_se[i.id]=i.type
+
+    
+    
+    print("ssssssss",index_se)
+    
 
     
 
     return jsonify({
       'success':True,
-      "categories":selection,
+      "categories":index_se,
       "total_categories":len(selection)
     })
 
- 
-
 
   
-  @app.route('/questions')
+  @app.route('/questions', methods=['GET'])
   def retrive_questions():
-    selection= Question.query.order_by(Question.id).all()
-    current_question = paginate_questions(request, selection)
-    if len(current_question) ==0:
-      abort(404)
-    current_category=[i.category for i in selection]
-    selection2 = Category.query.order_by(Category.id).all()
-    selection2=[i.type.format() for i in selection2]
-   
+    try:
+      selection= Question.query.order_by(Question.id).all()
+      categories=Category.query.order_by(Category.id).all()
+      current_question = paginate_questions(request, selection)
+      category={}
+      for i in categories:
+        category[i.id]=i.type
+      
+      current_categories={}
+      for i in range(len(current_question)):
+        current_categories[i]=current_question[i]['category']
+      
+      if len(current_question) ==0:
+        abort(404)
+      
+      print(len(selection))
 
-    return jsonify({
-      "success":True,
-      "questions":current_question,
-      "total_question":len(current_question),
-      "categories":selection2,
-      # "current_category":current_category
+      return jsonify({
+        "success":True,
+        "questions":current_question,
+        "total_questions":len(selection),
+        "categories":category,
+        "current_category":current_categories
       
     })
+
+    except:
+      abort(404)
 
 
   
@@ -116,8 +134,7 @@ def create_app(test_config=None):
       if search:
         selection=Question.query.order_by(Question.id).filter(Question.question.ilike('%{}%'.format(search)))
         x=selection.all()
-        if  selection is None :
-          abort(404)
+       
         
         current_question=paginate_questions(request, selection)
         
@@ -147,7 +164,7 @@ def create_app(test_config=None):
   
   @app.route('/categories/<int:cat_id>/questions', methods=['GET'])
   def get_questions_by_categories(cat_id):
-    selection=Question.query.filter(Question.category == (cat_id+1))
+    selection=Question.query.filter(Question.category == cat_id)
     questions=paginate_questions(request, selection)
 
     return jsonify({
@@ -164,9 +181,9 @@ def create_app(test_config=None):
     print("info send :", body)
     previous_questions=body['previous_questions']
     quiz_category=body['quiz_category']['id']
-    # print("test",previous_questions, "id:", quiz_category)
+    
     try:
-      quiz=Question.query.filter(Question.category == int(quiz_category)+1).all()
+      quiz=Question.query.filter(Question.category == quiz_category).all()
 
       if quiz is None:
         abort(404)
@@ -185,8 +202,19 @@ def create_app(test_config=None):
       abort(422) 
 
 
+  @app.errorhandler(405)
+  def method_not_allow(error):
+      return jsonify({
+        "success":False,
+        "error":405,
+        "message":"Method Not Allow ",
+      }),405
+  
+  
+  
+  
   @app.errorhandler(404)
-  def notFound(error):
+  def not_found(error):
     return jsonify({
       "success":False,
       "error":404,
@@ -200,6 +228,8 @@ def create_app(test_config=None):
       "error":422,
       "message":"unprocessable",
     }),422
+
+    
 
 
   return app
