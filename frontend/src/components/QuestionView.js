@@ -3,7 +3,7 @@ import React, { Component } from 'react';
 import '../stylesheets/App.css';
 import Question from './Question';
 import Search from './Search';
-import $ from 'jquery';
+import $, { type } from 'jquery';
 
 class QuestionView extends Component {
   constructor(){
@@ -19,6 +19,7 @@ class QuestionView extends Component {
 
   componentDidMount() {
     this.getQuestions();
+
   }
 
   getQuestions = () => {
@@ -31,6 +32,7 @@ class QuestionView extends Component {
           totalQuestions: result.total_questions,
           categories: result.categories,
           currentCategory: result.current_category })
+          
         return;
       },
       error: (error) => {
@@ -42,12 +44,13 @@ class QuestionView extends Component {
 
   selectPage(num) {
     this.setState({page: num}, () => this.getQuestions());
+    
   }
 
   createPagination(){
     let pageNumbers = [];
-    let maxPage = 3
-    // Math.ceil(this.state.totalQuestions / 1)
+    console.log(this.state.totalQuestions);
+    let maxPage = Math.ceil(this.state.totalQuestions / 10)
     for (let i = 1; i <= maxPage; i++) {
       pageNumbers.push(
         <span
@@ -60,6 +63,7 @@ class QuestionView extends Component {
   }
 
   getByCategory= (id) => {
+    
     $.ajax({
       url: `/categories/${id}/questions`, //TODO: update request URL
       type: "GET",
@@ -120,20 +124,44 @@ class QuestionView extends Component {
     }
   }
 
+
+
   render() {
+    
+       
+     
     return (
+      
       <div className="question-view">
         <div className="categories-list">
-          <h2 onClick={() => {this.getQuestions()}}>Categories</h2>
+          <h2
+         
+            onClick={() => {
+              this.getQuestions();
+            }}
+          >
+            Categories
+          </h2>
           <ul>
-            {Object.keys(this.state.categories).map((id, ) => (
-              <li key={id} onClick={() => {this.getByCategory(id)}}>
+            {console.log(this.state.categories)}
+            {Object.keys(this.state.categories).map((id) => (
+              <li
+                key={id}
+                onClick={() => {
+                  this.getByCategory(id);
+                }}
+              >
                 {this.state.categories[id]}
-                <img className="category" src={`${this.state.categories[id]}.svg`}/>
+                <img
+                  className="category"
+                  
+                  src={`${this.state.categories[id]}.svg`}
+                  alt=""
+                />
               </li>
             ))}
           </ul>
-          <Search submitSearch={this.submitSearch}/>
+          <Search submitSearch={this.submitSearch} />
         </div>
         <div className="questions-list">
           <h2>Questions</h2>
@@ -142,16 +170,13 @@ class QuestionView extends Component {
               key={q.id}
               question={q.question}
               answer={q.answer}
-              category={this.state.categories[q.category]} 
+              category={this.state.categories[q.category]}
               difficulty={q.difficulty}
               questionAction={this.questionAction(q.id)}
             />
           ))}
-          <div className="pagination-menu">
-            {this.createPagination()}
-          </div>
+          <div className="pagination-menu">{this.createPagination()}</div>
         </div>
-
       </div>
     );
   }

@@ -71,12 +71,12 @@ REVIEW_COMMENT
 This README is missing documentation of your endpoints. Below is an example for your endpoint to get all categories. Please use it as a reference for creating your documentation and resubmit your code.  
 
 Endpoints
-GET '/categories'
-GET ''/questions'
-GET ...'/categories/<int:cat_id>/questions'
+GET '/categories' done
+GET ''/questions' done
+GET ...'/categories/1/questions' done
 POST ...'/questions' 
 POST ....'/quizzes' 
-DELETE ... 'questions/<int:q_id>'
+DELETE ... 'questions/<int:q_id>' done
 Error Handler(405)
 Error handler(404)
 Error handler(422)
