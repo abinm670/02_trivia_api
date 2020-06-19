@@ -72,9 +72,15 @@ This README is missing documentation of your endpoints. Below is an example for 
 
 Endpoints
 GET '/categories'
+GET ''/questions'
 GET ...'/categories/<int:cat_id>/questions'
 POST ...'/questions' 
+POST ....'/quizzes' 
 DELETE ... 'questions/<int:q_id>'
+Error Handler(405)
+Error handler(404)
+Error handler(422)
+
 
 GET '/categories'
 - Fetches a dictionary of categories in which the keys are the ids and the value is the corresponding string of the category
@@ -88,8 +94,52 @@ GET '/categories'
 '6' : "Sports"}
 
 ```
+GET ''/questions'
+- Fetches a dictionary of all questions in the data database 
+- Request Argumnet: None
+- Return an object with list of dictionaries for each row in the questions table, categories in wich keys are the ids and the value is the corresponding string of the category ,current category in the single page ,and the total of all the questions in the database.
+
+{
+  "categories": {
+    "1": "Science",
+    "2": "Art",
+    "3": "Geography",
+    "4": "History",
+    "5": "Entertainment",
+    "6": "Sports"
+  },
+  "current_category": {
+    "0": 5,
+    "1": 5,
+    "2": 4,
+    "3": 5,
+    "4": 4,
+    "5": 6,
+    "6": 6,
+    "7": 4,
+    "8": 3,
+    "9": 3
+  },
+  "questions": [
+    {
+      "answer": "Apollo 13",
+      "category": 5,
+      "difficulty": 4,
+      "id": 2,
+      "question": "What movie earned Tom Hanks his third straight Oscar nomination, in 1996?"
+    },
+    {
+      "answer": "Tom Cruise",
+      "category": 5,
+      "difficulty": 4,
+      "id": 4,
+      "question": "What actor did author Anne Rice first denounce, then praise in the role of her beloved Lestat?"
+    }]
+
+
+...
 GET 'categories/id/questions'
-- Fetchs a dictionary of questions
+- Request selected question 
 - Request Argument: selecte category 
 - Reruens: An object with list of dictionary(questions) filtered by category
 "questions": [
@@ -102,8 +152,8 @@ GET 'categories/id/questions'
     }]
 
 '''
-POST'
-- Option A: Creaet a new instance of the questions table
+POST'/questions'
+- Option A: Creaet a new instance of the questions table 
 - Optiona B: Search for questions in the database
 - Request Argumnet: None, data collection Json file
 - Return : option A confirmation or an error 
@@ -120,6 +170,58 @@ DELETE
         "question":"",
         "total_question":""
     }
+
+POST '/quizzes'
+- Request quize by category 
+- Respond: send one question for each request based on the requeted catigories 
+- Return an object with information below:
+
+request:
+{
+	
+	"previous_questions":[],
+	"quiz_category":{
+		"type":"Art",
+		"id":"2"
+	}
+}
+
+respond:
+{
+  "previous_questions": [],
+  "question": {
+    "answer": "One",
+    "category": 2,
+    "difficulty": 4,
+    "id": 18,
+    "question": "How many paintings did Van Gogh sell in his lifetime?"
+  },
+  "success": true
+}
+
+Error (405)
+Catch if request method not allowed and return 
+        "success":False,
+        "error":405,
+        "message":"Method Not Allow ",
+
+ Error handler(404)
+ Catch if request source not found and return the message below:
+      "success":False,
+      "error":404,
+      "message":"resource not found please check your input"
+    
+
+
+
+Error (422)
+Catch if request can not be process and re return the message below:
+
+      "success":False,
+      "error":422,
+      "message":"unprocessable"
+
+
 
 
 
