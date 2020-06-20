@@ -39,7 +39,7 @@ class TriviaTestCase(unittest.TestCase):
     """
     TODO
     Write at least one test for each test for successful operation and for expected errors.
-    """
+    # """
     def test_get_paginated_questions(self):
         res=self.client().get('/questions')
         data=json.loads(res.data)
@@ -68,8 +68,13 @@ class TriviaTestCase(unittest.TestCase):
         self.assertEqual(data['deleted'], 6)
         self.assertTrue(data['total_question'])
         self.assertTrue(len(data['question']))
-
     
+    def test_error404_resource_not_found_delete_question(self):
+        res=self.client().delete('/questions/ssss')
+        data=json.loads(res.data)
+
+        self.assertEqual(res.status_code, 404)
+        self.assertEqual(data['message'],'resource not found please check your input')
     
 
     def test_create_new_question(self):
@@ -78,8 +83,7 @@ class TriviaTestCase(unittest.TestCase):
         
         self.assertEqual(res.status_code,200)
         self.assertEqual(data['question'],"what is your fav books?")
-        
-
+    
     
     def test_404_if_question_does_not_exist(self): 
         res = self.client().delete('/questions/12345')
@@ -143,10 +147,17 @@ class TriviaTestCase(unittest.TestCase):
 
         self.assertEqual(res.status_code, 422)
         self.assertEqual(data['success'], False)
-        
-        
+    
+    def test_error_create_new_question(self):
+         res = self.client().post('/questions', json={"test":"any value"})
+         data = json.loads(res.data)
 
+         self.assertEqual(res.status_code, 422)
+         self.assertEqual(data['message'], 'unprocessable')
+         self.assertEqual(data['success'], False)
+
+        
 
 # Make the tests conveniently executable
 if __name__ == "__main__":
-    unittest.main()
+ unittest.main()
