@@ -124,7 +124,7 @@ def create_app(test_config=None):
     body=request.get_json()
         
     new_question=body.get('question',None)
-    new_answer=body.get('answer', None)
+    new_answer=body.get('answer')
     new_difficulty=body.get('difficulty')
     new_category=body.get('category')
     search=body.get('searchTerm')
@@ -147,12 +147,13 @@ def create_app(test_config=None):
         })
 
       else:
-        question=Question(question=new_question, answer=new_category, difficulty=new_category, category=new_category )
+        question=Question(question=new_question, answer=new_answer, difficulty=new_difficulty, category=new_category )
         question.insert()
         print(question)
         return jsonify({
           'success':True,
           'created':question.id,
+          'question':new_question,
           'total_books':len(Question.query.all())
         })
     
