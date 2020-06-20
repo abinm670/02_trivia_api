@@ -46,13 +46,8 @@ def create_app(test_config=None):
     index_se={}
     for i in selection:
       index_se[i.id]=i.type
-
-    
-    
-    print("ssssssss",index_se)
     
 
-    
 
     return jsonify({
       'success':True,
@@ -149,6 +144,10 @@ def create_app(test_config=None):
 
       else:
         question=Question(question=new_question, answer=new_answer, difficulty=new_difficulty, category=new_category )
+        
+        if len(question) ==0:
+          abort(404)
+
         question.insert()
         print(question)
         return jsonify({
