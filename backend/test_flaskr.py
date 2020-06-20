@@ -20,9 +20,9 @@ class TriviaTestCase(unittest.TestCase):
 
         self.new_question ={
             'question':'what is your fav books?',
-            'answer':'Math',
             'difficulty':'9',
-            'category':'1'
+            'category':'3',
+            'answer':"Math"
         }
 
         # binds the app to the current context
@@ -75,7 +75,10 @@ class TriviaTestCase(unittest.TestCase):
     def test_create_new_question(self):
         res = self.client().post('/questions', json=self.new_question)
         data = json.loads(res.data)
-        pass
+        
+        self.assertEqual(res.status_code,200)
+        self.assertEqual(data['question'],"what is your fav books?")
+        
 
     
     def test_404_if_question_does_not_exist(self): 
