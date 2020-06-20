@@ -154,9 +154,7 @@ class TriviaTestCase(unittest.TestCase):
 
          self.assertEqual(res.status_code, 422)
          self.assertEqual(data['message'], 'unprocessable')
-         self.assertEqual(data['success'], False)
-
-        
+         self.assertEqual(data['success'], False)        
 
 # Make the tests conveniently executable
 if __name__ == "__main__":
