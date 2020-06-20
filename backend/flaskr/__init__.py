@@ -72,6 +72,7 @@ def create_app(test_config=None):
       for i in categories:
         category[i.id]=i.type
       
+      
       current_categories={}
       for i in range(len(current_question)):
         current_categories[i]=current_question[i]['category']
@@ -184,13 +185,22 @@ def create_app(test_config=None):
     quiz_category=body['quiz_category']['id']
     
     try:
-      quiz=Question.query.filter(Question.category == quiz_category).all()
 
-      if quiz is None:
-        abort(404)
+      if quiz_category == 0:
+        quiz=Question.query.all()
+        quiz_list=[q.format() for q in quiz]
+        quiz=random.choice(quiz_list)
 
-      quiz_list=[q.format() for q in quiz]
-      quiz=random.choice(quiz_list)
+
+
+      else:
+        quiz=Question.query.filter(Question.category == quiz_category).all()
+
+        if quiz is None:
+          abort(404)
+
+        quiz_list=[q.format() for q in quiz]
+        quiz=random.choice(quiz_list)
 
       return jsonify({
         "success":True,
